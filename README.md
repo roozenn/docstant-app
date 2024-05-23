@@ -4,7 +4,7 @@ A new Flutter project aimed at providing healthcare-related services.
 
 ## Overview
 
-This project is designed to serve as a comprehensive starting point for building a healthcare-related mobile application using Flutter. The app includes features such as displaying nearby hospitals, booking appointments, and symptom tracking.
+This project is designed to serve as a comprehensive starting point for building a healthcare-related mobile application using Flutter. The app includes features such as displaying nearby hospitals, booking appointments.
 
 ## Features
 

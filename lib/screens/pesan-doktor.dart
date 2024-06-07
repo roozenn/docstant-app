@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthcare/screens/pilih-jam.dart';
 
 class PesanDoktorScreen extends StatelessWidget {
   final List<String> imgs = [
@@ -252,7 +253,12 @@ class DoctorCard extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 8),
                             ),
                             onPressed: () {
-                              // handle online consultation action
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ConsultationBookingPage(),
+                                  ));
                             },
                             child: Text(
                               'Konsultasi Online',

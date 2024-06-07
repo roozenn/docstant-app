@@ -189,3 +189,145 @@ class HospitalCard extends StatelessWidget {
     );
   }
 }
+
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:healthcare/screens/pesan-doktor.dart';
+
+// class Post {
+//   final String title;
+//   final String content;
+
+//   Post({required this.title, required this.content});
+
+//   factory Post.fromJson(Map<String, dynamic> json) {
+//     return Post(
+//       title: json['title'],
+//       content: json['content'],
+//     );
+//   }
+// }
+
+// class HomeScreen extends StatefulWidget {
+//   @override
+//   _HomeScreenState createState() => _HomeScreenState();
+// }
+
+// class _HomeScreenState extends State<HomeScreen> {
+//   List<Post> posts = [];
+
+//   Future<void> getPosts() async {
+//     try {
+//       var response = await http.get(Uri.parse(
+//           'http://192.168.210.235:8000/posts/')); // Ganti dengan IP address lokal Anda
+
+//       if (response.statusCode == 200) {
+//         var jsonData = jsonDecode(response.body);
+//         List<Post> tempPosts = [];
+//         for (var eachPost in jsonData) {
+//           tempPosts.add(Post.fromJson(eachPost));
+//         }
+//         setState(() {
+//           posts = tempPosts;
+//         });
+//       } else {
+//         throw Exception('Failed to load posts');
+//       }
+//     } catch (e) {
+//       print('Error: $e');
+//       throw Exception('Failed to load posts');
+//     }
+//   }
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     getPosts();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         automaticallyImplyLeading: false,
+//         backgroundColor: Colors.indigo,
+//         title: Row(
+//           children: [
+//             Icon(Icons.medical_services, color: Colors.white),
+//             SizedBox(width: 5),
+//             Text(
+//               'docstant',
+//               style: TextStyle(
+//                 color: Colors.white,
+//                 fontSize: 24,
+//                 fontWeight: FontWeight.bold,
+//                 letterSpacing: 1.5,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//       body: posts.isEmpty
+//           ? Center(child: CircularProgressIndicator())
+//           : SingleChildScrollView(
+//               child: Column(
+//                 children: posts.map((post) {
+//                   return HospitalCard(
+//                     name: post.title,
+//                     distance: '1km', // Static distance for example
+//                     onTap: () {
+//                       Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => PesanDoktorScreen(),
+//                         ),
+//                       );
+//                     },
+//                   );
+//                 }).toList(),
+//               ),
+//             ),
+//     );
+//   }
+// }
+
+// class HospitalCard extends StatelessWidget {
+//   final String name;
+//   final String distance;
+//   final VoidCallback onTap;
+
+//   HospitalCard(
+//       {required this.name, required this.distance, required this.onTap});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+//       child: Card(
+//         color: Colors.lightBlue,
+//         shape: RoundedRectangleBorder(
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         child: ListTile(
+//           onTap: onTap,
+//           leading: Icon(Icons.location_city, color: Colors.white, size: 40),
+//           title: Text(
+//             name,
+//             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+//           ),
+//           trailing: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Icon(Icons.location_on, color: Colors.white),
+//               Text(
+//                 distance,
+//                 style: TextStyle(color: Colors.white),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -13,7 +13,7 @@ class _ScheduleScreenState extends State<PengobatanOffline> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: Colors.indigo,
+        backgroundColor: Color.fromRGBO(0, 81, 138, 1),
         title: Text(
           'Pengobatan',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
@@ -103,7 +103,7 @@ class SectionWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.lightBlue,
+        color: Color.fromRGBO(95, 189, 255, 1),
         borderRadius: BorderRadius.circular(8.0),
       ),
       width: width,

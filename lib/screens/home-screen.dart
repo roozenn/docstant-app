@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.indigo,
+        backgroundColor: Color.fromRGBO(0, 81, 138, 1),
         title: Row(
           children: [
             Icon(Icons.medical_services, color: Colors.white),
@@ -156,7 +156,7 @@ class HospitalCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
-        color: Colors.lightBlue,
+        color: Color.fromRGBO(95, 189, 255, 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

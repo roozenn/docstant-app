@@ -84,7 +84,7 @@ class _ConsultationBookingPageState extends State<ConsultationBookingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Color.fromRGBO(0, 81, 138, 1),
         title: Text(
           'Daftar Konsultasi',
           style: TextStyle(
@@ -126,7 +126,7 @@ class _ConsultationBookingPageState extends State<ConsultationBookingPage> {
       bottomNavigationBar: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.indigo,
+          color: Color.fromRGBO(0, 81, 138, 1),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),

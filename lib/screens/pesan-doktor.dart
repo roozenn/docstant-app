@@ -1,16 +1,54 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:healthcare/screens/pilih-jam.dart';
 
-class PesanDoktorScreen extends StatelessWidget {
-  final List<String> imgs = [
-    "doctor1.jpg",
-    "doctor2.jpg",
-    "doctor3.jpg",
-    "doctor4.jpg",
-    "doctor5.jpg",
-    "doctor6.jpg",
-  ];
+class PesanDoktorScreen extends StatefulWidget {
+  final String hospitalName;
+  final String hospitalAddress;
+  final String hospitalDistance;
+
+  PesanDoktorScreen({
+    required this.hospitalName,
+    required this.hospitalAddress,
+    required this.hospitalDistance,
+  });
+
+  @override
+  _PesanDoktorScreenState createState() => _PesanDoktorScreenState();
+}
+
+class _PesanDoktorScreenState extends State<PesanDoktorScreen> {
+  List<Doctor> doctors = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDoctors();
+  }
+
+  Future<void> fetchDoctors() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.82.235:8000/dokter'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      List<Doctor> fetchedDoctors =
+          data.map((json) => Doctor.fromJson(json)).toList();
+
+      // Randomly select 5 doctors
+      fetchedDoctors.shuffle();
+      setState(() {
+        doctors = fetchedDoctors.take(5).toList();
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load doctors');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +66,20 @@ class PesanDoktorScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        centerTitle: false, // Membuat teks tidak terpusat
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            HospitalCard(),
+            HospitalCard(
+              name: widget.hospitalName,
+              address: widget.hospitalAddress,
+              distance: widget.hospitalDistance,
+            ),
             SizedBox(height: 20),
-            DoctorList(imgs: imgs),
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : DoctorList(doctors: doctors),
           ],
         ),
       ),
@@ -44,6 +88,16 @@ class PesanDoktorScreen extends StatelessWidget {
 }
 
 class HospitalCard extends StatelessWidget {
+  final String name;
+  final String address;
+  final String distance;
+
+  HospitalCard({
+    required this.name,
+    required this.address,
+    required this.distance,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -69,7 +123,7 @@ class HospitalCard extends StatelessWidget {
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Rumah Sakit Dr. Wahidin Sudirohusodo',
+                      name,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -83,9 +137,7 @@ class HospitalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text(
-                      'Jl. Ciumbuleuit No.203, Ciumbuleuit, Kec. Cidadap, Kota Bandung, Jawa Barat 40142',
-                    ),
+                    child: Text(address),
                   ),
                   SizedBox(width: 8),
                   Column(
@@ -103,11 +155,10 @@ class HospitalCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.location_on,
-                              color: Colors.black,
-                              size: 12), // Menambahkan icon titik lokasi
-                          SizedBox(width: 2), // Spasi antara icon dan teks
+                              color: Colors.black, size: 12),
+                          SizedBox(width: 2),
                           Text(
-                            '1,2km',
+                            distance,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 10,
@@ -128,9 +179,9 @@ class HospitalCard extends StatelessWidget {
 }
 
 class DoctorList extends StatelessWidget {
-  final List<String> imgs;
+  final List<Doctor> doctors;
 
-  DoctorList({required this.imgs});
+  DoctorList({required this.doctors});
 
   @override
   Widget build(BuildContext context) {
@@ -175,123 +226,133 @@ class DoctorList extends StatelessWidget {
           ),
         ),
         SizedBox(height: 20),
-        DoctorCard(
-            name: 'Dr. Sahlan Iskandar',
-            specialization: 'Spesialis Umum',
-            image: imgs[0]),
-        DoctorCard(
-            name: 'Dr. Rini Widodo',
-            specialization: 'Spesialis Anak',
-            image: imgs[1]),
-        DoctorCard(
-            name: 'Dr. Ahmad Yani',
-            specialization: 'Spesialis Bedah',
-            image: imgs[2]),
-        DoctorCard(
-            name: 'Dr. Budi Santoso',
-            specialization: 'Spesialis Jantung',
-            image: imgs[3]),
-        DoctorCard(
-            name: 'Dr. Tuti Herawati',
-            specialization: 'Spesialis Kulit',
-            image: imgs[4]),
-        DoctorCard(
-            name: 'Dr. Agus Supriyadi',
-            specialization: 'Spesialis Mata',
-            image: imgs[5]),
+        ...doctors
+            .map((doctor) => DoctorCard(doctor: doctor, image: 'doctor1.jpg'))
+            .toList(),
       ],
     );
   }
 }
 
 class DoctorCard extends StatelessWidget {
-  final String name;
-  final String specialization;
+  final Doctor doctor;
   final String image;
 
   DoctorCard({
-    required this.name,
-    required this.specialization,
+    required this.doctor,
     required this.image,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Card(
-        color: Colors.lightBlue[100],
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage('images/$image'),
-                radius: 30,
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(specialization),
-                    SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.yellow,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        ConsultationBookingPage(),
-                                  ));
-                            },
-                            child: Text(
-                              'Konsultasi Online',
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              backgroundColor: Colors.purple,
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                            ),
-                            onPressed: () {
-                              // handle direct consultation action
-                            },
-                            child: Text(
-                              'Konsultasi Langsung',
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConsultationBookingPage(doctor: doctor),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Card(
+          color: Colors.lightBlue[100],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: AssetImage('images/$image'),
+                  radius: 30,
                 ),
-              ),
-            ],
+                SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doctor.nama,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(doctor.spesialisasi),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.yellow,
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ConsultationBookingPage(
+                                              doctor: doctor),
+                                    ));
+                              },
+                              child: Text(
+                                'Konsultasi Online',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.purple,
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ConsultationBookingPage(
+                                              doctor: doctor),
+                                    ));
+                              },
+                              child: Text(
+                                'Konsultasi Langsung',
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class Doctor {
+  final int id;
+  final String nama;
+  final String spesialisasi;
+
+  Doctor({required this.id, required this.nama, required this.spesialisasi});
+
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    return Doctor(
+      id: json['id'],
+      nama: json['nama'],
+      spesialisasi: json['spesialisasi'],
     );
   }
 }

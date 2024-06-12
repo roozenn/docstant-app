@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Consultation Booking',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: ConsultationBookingPage(),
-    );
-  }
-}
+import 'package:healthcare/screens/pembayaran.dart';
+import 'package:healthcare/screens/pesan-doktor.dart';
 
 class ConsultationBookingPage extends StatefulWidget {
+  final Doctor doctor;
+
+  ConsultationBookingPage({required this.doctor});
+
   @override
   _ConsultationBookingPageState createState() =>
       _ConsultationBookingPageState();
@@ -97,7 +86,7 @@ class _ConsultationBookingPageState extends State<ConsultationBookingPage> {
       appBar: AppBar(
         backgroundColor: Colors.indigo,
         title: Text(
-          'Daftar Konsultasi Langsung',
+          'Daftar Konsultasi',
           style: TextStyle(
               fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
         ),
@@ -113,7 +102,10 @@ class _ConsultationBookingPageState extends State<ConsultationBookingPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            ProfileCard(),
+            SizedBox(
+              width: double.infinity,
+              child: DoctorCard(doctor: widget.doctor), // Updated to DoctorCard
+            ),
             SizedBox(height: 16),
             DateSelector(
               selectedDate: selectedDate,
@@ -149,24 +141,28 @@ class _ConsultationBookingPageState extends State<ConsultationBookingPage> {
   }
 }
 
-class ProfileCard extends StatelessWidget {
+class DoctorCard extends StatelessWidget {
+  final Doctor doctor;
+
+  DoctorCard({required this.doctor});
+
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             CircleAvatar(
               radius: 40,
               backgroundImage: AssetImage(
-                  'assets/doctor.png'), // replace with actual image path
+                  'images/doctor1.jpg'), // replace with actual image path
             ),
             SizedBox(height: 16),
             Text(
-              'Dr. Sahlan Iskandar',
+              doctor.nama,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -174,7 +170,7 @@ class ProfileCard extends StatelessWidget {
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             Text(
-              'Dokter Spesialis Penyakit Dalam',
+              doctor.spesialisasi,
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
@@ -372,7 +368,15 @@ class BottomBar extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              // Handle schedule selection
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaymentPage(
+                    selectedDate: selectedDate,
+                    selectedTime: selectedTime,
+                  ),
+                ),
+              );
             },
             child: Text('PILIH'),
             style: ElevatedButton.styleFrom(

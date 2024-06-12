@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:healthcare/widgets/upcoming_schedule.dart';
+import 'package:healthcare/screens/p-offline.dart';
+import 'package:healthcare/screens/p-online.dart';
 
 class PengobatanScreen extends StatefulWidget {
   @override
@@ -19,163 +20,153 @@ class _ScheduleScreenState extends State<PengobatanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: Colors.indigo,
         title: Text(
           'Pengobatan',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        backgroundColor: Colors.indigo,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ReservationCard(
+                date: 'Jumat, 01 Maret, 11:00 WIB',
+                type: 'Langsung',
+                hospital: 'Rumah Sakit Angkatan Udara RSAU dr. M. Salamun',
+                doctor: 'Dr. Sahlan Iskandar',
+                buttonText: 'Lanjutkan',
+                buttonColor: Colors.green,
+                onPressed: () {
+                  // Add your onPressed code here!
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PengobatanOffline(),
+                      ));
+                },
+              ),
+              SizedBox(height: 16),
+              ReservationCard(
+                date: 'Senin, 23 Februari, 8:00 WIB',
+                type: 'Online',
+                hospital: 'Rumah Sakit Angkatan Udara RSAU dr. M. Salamun',
+                doctor: 'Dr. Sahlan Iskandar',
+                buttonText: 'Lanjutkan',
+                buttonColor: Colors.green,
+                onPressed: () {
+                  // Add your onPressed code here!
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PengobatanOnline(),
+                      ));
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ReservationCard extends StatelessWidget {
+  final String date;
+  final String type;
+  final String hospital;
+  final String doctor;
+  final String buttonText;
+  final Color buttonColor;
+  final VoidCallback onPressed;
+
+  const ReservationCard({
+    required this.date,
+    required this.type,
+    required this.hospital,
+    required this.doctor,
+    required this.buttonText,
+    required this.buttonColor,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.lightBlue[100],
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeaderSectionWidget(
-              title: 'Layanan Pengobatan',
-              content:
-                  'Tanggal: 01 Maret\nDokter: Dr. Sahlan Iskandar\nSpesialis: Umum\nPengobatan: Pemeriksaan Umum',
-              width: double.infinity,
+            Text(
+              'Reservasi $date',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    _buildDataRow(Icons.local_hospital, 'Tipe Pelayanan', type),
+                    _buildDivider(),
+                    _buildDataRow(Icons.location_city, 'Rumah Sakit', hospital),
+                    _buildDivider(),
+                    _buildDataRow(Icons.person, 'Dokter', doctor),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 16),
-            MainCard(
-              sections: [
-                SectionWidget(
-                  title: '1. Nurse Stasion',
-                  content:
-                      'Tekanan Darah: 80 mmHg\nTinggi: 160 cm\nBerat Badan: 70 kg',
-                  width: double.infinity,
-                ),
-                SizedBox(height: 16),
-                SectionWidget(
-                  title: '2. Diagnosis Dokter',
-                  content:
-                      'Diagnosis: Gejala Anda mungkin terkait dengan infeksi virus, termasuk kemungkinan infeksi COVID-19\n\n'
-                      'Saran Umum:\n'
-                      '- Patuhi protokol kesehatan, termasuk penggunaan masker dan menjaga jarak fisik.\n'
-                      '- Jangan melakukan perjalanan atau kontak dekat dengan orang lain sampai hasil tes dikeluarkan.',
-                  width: double.infinity,
-                ),
-                SizedBox(height: 16),
-                SectionWidget(
-                  title: '3. Obat',
-                  content:
-                      'Parasetamol: Obat ini dapat membantu menurunkan demam dan meredakan nyeri. Pastikan untuk mengonsumsinya sesuai petunjuk dokter atau yang tertera pada kemasan.\n\n'
-                      'Antihistamin: Untuk meredakan gejala pilek seperti hidung tersumbat dan bersin.',
-                  button: ElevatedButton(
-                    onPressed: () {
-                      // Add your button functionality here
-                    },
-                    child: Text('Bayar'),
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: buttonColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  width: double.infinity,
                 ),
-              ],
+                onPressed: onPressed,
+                child: Text(buttonText, style: TextStyle(color: Colors.white)),
+              ),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class SectionWidget extends StatelessWidget {
-  final String title;
-  final String content;
-  final Widget? button;
-  final double? width;
-
-  SectionWidget(
-      {required this.title, required this.content, this.button, this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.lightBlue,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      width: width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+  Widget _buildDataRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.black54),
+        SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(color: Colors.black87),
           ),
-          SizedBox(height: 8),
-          Text(content),
-          if (button != null) ...[
-            SizedBox(height: 8),
-            button!,
-          ]
-        ],
-      ),
+        ),
+      ],
     );
   }
-}
 
-class HeaderSectionWidget extends StatelessWidget {
-  final String title;
-  final String content;
-  final double? width;
-
-  HeaderSectionWidget({required this.title, required this.content, this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.blueAccent,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      width: width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
-          ),
-          SizedBox(height: 8),
-          Text(content, style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-}
-
-class MainCard extends StatelessWidget {
-  final List<Widget> sections;
-
-  MainCard({required this.sections});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: sections,
-      ),
-    );
+  Widget _buildDivider() {
+    return Divider(color: Colors.grey[300], height: 16);
   }
 }

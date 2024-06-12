@@ -1,18 +1,38 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class RiwayatScreen extends StatefulWidget {
   @override
-  State<RiwayatScreen> createState() => _ScheduleScreenState();
+  State<RiwayatScreen> createState() => _RiwayatScreenState();
 }
 
-class _ScheduleScreenState extends State<RiwayatScreen> {
-  // int _buttonIndex = 0;
+class _RiwayatScreenState extends State<RiwayatScreen> {
+  List<Reservation> reservations = [];
+  bool isLoading = true;
 
-  // final _scheduleWidgets = [
-  //   UpcomingSchedule(),
-  //   Container(),
-  //   Container(),
-  // ];
+  @override
+  void initState() {
+    super.initState();
+    fetchReservations();
+  }
+
+  Future<void> fetchReservations() async {
+    final response =
+        await http.get(Uri.parse('http://192.168.82.235:8000/reservations'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      List<Reservation> fetchedReservations =
+          data.map((json) => Reservation.fromJson(json)).toList();
+      setState(() {
+        reservations = fetchedReservations;
+        isLoading = false;
+      });
+    } else {
+      throw Exception('Failed to load reservations');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,59 +48,28 @@ class _ScheduleScreenState extends State<RiwayatScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ReservationCard(
-                date: 'Jumat, 01 Maret, 11:00 WIB',
-                type: 'Langsung',
-                hospital: 'Rumah Sakit Angkatan Udara RSAU dr. M. Salamun',
-                doctor: 'Dr. Sahlan Iskandar',
-                buttonText: 'Detail',
-                buttonColor: Colors.grey,
-                onPressed: () {
-                  // Add your onPressed code here!
-                },
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Column(
+                  children: reservations.map((reservation) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: ReservationCard(
+                        date: reservation.date,
+                        type: reservation.type,
+                        hospital: reservation.hospital,
+                        doctor: reservation.doctor,
+                        buttonText: 'Detail',
+                        buttonColor: Colors.grey,
+                        onPressed: () {
+                          // Add your onPressed code here!
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
-              SizedBox(height: 16),
-              ReservationCard(
-                date: 'Senin, 23 Februari, 8:00 WIB',
-                type: 'Online',
-                hospital: 'Rumah Sakit Angkatan Udara RSAU dr. M. Salamun',
-                doctor: 'Dr. Sahlan Iskandar',
-                buttonText: 'Detail',
-                buttonColor: Colors.grey,
-                onPressed: () {
-                  // Add your onPressed code here!
-                },
-              ),
-              SizedBox(height: 16),
-              ReservationCard(
-                date: 'Rabu, 15 April, 10:00 WIB',
-                type: 'Langsung',
-                hospital: 'Rumah Sakit Cipto Mangunkusumo',
-                doctor: 'Dr. Anisa Putri',
-                buttonText: 'Detail',
-                buttonColor: Colors.grey,
-                onPressed: () {
-                  // Add your onPressed code here!
-                },
-              ),
-              SizedBox(height: 16),
-              ReservationCard(
-                date: 'Kamis, 05 Mei, 9:00 WIB',
-                type: 'Online',
-                hospital: 'Rumah Sakit Hasan Sadikin',
-                doctor: 'Dr. Budi Santoso',
-                buttonText: 'Detail',
-                buttonColor: Colors.grey,
-                onPressed: () {
-                  // Add your onPressed code here!
-                },
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -180,5 +169,28 @@ class ReservationCard extends StatelessWidget {
 
   Widget _buildDivider() {
     return Divider(color: Colors.grey[300], height: 16);
+  }
+}
+
+class Reservation {
+  final String date;
+  final String type;
+  final String hospital;
+  final String doctor;
+
+  Reservation({
+    required this.date,
+    required this.type,
+    required this.hospital,
+    required this.doctor,
+  });
+
+  factory Reservation.fromJson(Map<String, dynamic> json) {
+    return Reservation(
+      date: json['date'],
+      type: json['type'],
+      hospital: json['hospital'],
+      doctor: json['doctor'],
+    );
   }
 }

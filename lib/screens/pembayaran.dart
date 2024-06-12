@@ -18,7 +18,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Color.fromRGBO(0, 81, 138, 1),
         title: Text(
           'Pembayaran Konsultasi',
           style: TextStyle(

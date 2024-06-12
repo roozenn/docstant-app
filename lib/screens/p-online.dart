@@ -8,7 +8,7 @@ class PengobatanOnline extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0),
         child: AppBar(
-          backgroundColor: Colors.indigo,
+          backgroundColor: Color.fromRGBO(0, 81, 138, 1),
           leadingWidth: 30,
           title: const Row(
             children: [

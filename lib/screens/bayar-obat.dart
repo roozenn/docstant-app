@@ -13,7 +13,7 @@ class _MedicationPaymentPageState extends State<MedicationPaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Color.fromRGBO(0, 81, 138, 1),
         title: Text(
           'Pembayaran Obat',
           style: TextStyle(

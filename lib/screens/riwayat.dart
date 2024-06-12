@@ -56,15 +56,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: ReservationCard(
-                        date: reservation.date,
-                        type: reservation.type,
-                        hospital: reservation.hospital,
-                        doctor: reservation.doctor,
-                        buttonText: 'Detail',
-                        buttonColor: Colors.grey,
-                        onPressed: () {
-                          // Add your onPressed code here!
-                        },
+                        title: 'Reservasi ${reservation.date}',
+                        reservation: reservation,
                       ),
                     );
                   }).toList(),
@@ -76,22 +69,12 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 }
 
 class ReservationCard extends StatelessWidget {
-  final String date;
-  final String type;
-  final String hospital;
-  final String doctor;
-  final String buttonText;
-  final Color buttonColor;
-  final VoidCallback onPressed;
+  final String title;
+  final Reservation reservation;
 
   const ReservationCard({
-    required this.date,
-    required this.type,
-    required this.hospital,
-    required this.doctor,
-    required this.buttonText,
-    required this.buttonColor,
-    required this.onPressed,
+    required this.title,
+    required this.reservation,
   });
 
   @override
@@ -100,49 +83,51 @@ class ReservationCard extends StatelessWidget {
       color: Colors.lightBlue[100],
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Reservasi $date',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      child: ListTile(
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        trailing: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    _buildDataRow(Icons.local_hospital, 'Tipe Pelayanan', type),
-                    _buildDivider(),
-                    _buildDataRow(Icons.location_city, 'Rumah Sakit', hospital),
-                    _buildDivider(),
-                    _buildDataRow(Icons.person, 'Dokter', doctor),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Detail Reservasi'),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: [
+                        _buildDataRow(Icons.local_hospital, 'Tipe Pelayanan',
+                            reservation.type),
+                        _buildDivider(),
+                        _buildDataRow(Icons.location_city, 'Rumah Sakit',
+                            reservation.hospital),
+                        _buildDivider(),
+                        _buildDataRow(
+                            Icons.person, 'Dokter', reservation.doctor),
+                      ],
+                    ),
                   ),
-                ),
-                onPressed: onPressed,
-                child: Text(buttonText, style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ],
+                  actions: [
+                    TextButton(
+                      child: Text('Tutup'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Text('Detail', style: TextStyle(color: Colors.white)),
         ),
       ),
     );

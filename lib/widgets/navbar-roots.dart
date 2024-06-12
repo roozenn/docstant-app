@@ -25,7 +25,7 @@ class _NavBarRootsState extends State<NavBarRoots> {
       bottomNavigationBar: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.indigo,
+          color: Color.fromRGBO(0, 81, 138, 1),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),

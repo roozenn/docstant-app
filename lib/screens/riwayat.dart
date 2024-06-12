@@ -44,7 +44,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: Colors.indigo,
+        backgroundColor:  Color.fromRGBO(0, 81, 138, 1),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -97,7 +97,7 @@ class ReservationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.lightBlue[100],
+      color: Color.fromRGBO(95, 189, 255, 1),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
